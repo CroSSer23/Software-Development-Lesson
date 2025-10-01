@@ -60,5 +60,18 @@ class Database:
             return None
     
     def create_tables(self):
-        pass
+        create_users_table = """
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(50) NOT NULL UNIQUE,
+            password VARCHAR(64) NOT NULL
+        )
+        """
+        
+        if self.execute_query(create_users_table):
+            print("✓ Table 'users' created successfully")
+            return True
+        else:
+            print("✗ Failed to create 'users' table")
+            return False
 
