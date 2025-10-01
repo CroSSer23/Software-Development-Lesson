@@ -3,18 +3,50 @@ import hashlib
 
 class User:
     
-    def __init__(self, database):
-        self.database = database
+    def __init__(self, db):
+        self.db = db
         self.current_user = None
     
-    def register(self, username, password, email):
-        pass
+    def register(self, username, password):
+        hashed = hashlib.sha256(password.encode()).hexdigest()
+        
+        check_query = "SELECT * FROM users WHERE username = %s"
+        existing_user = self.db.fetch_query(check_query, (username,))
+        
+        if existing_user:
+            print(f"\n✗ Username '{username}' already exists!")
+            return False
+        
+        insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+        
+        if self.db.execute_query(insert_query, (username, hashed)):
+            print(f"\n✓ User '{username}' registered successfully!")
+            return True
+        else:
+            print("\n✗ Registration failed!")
+            return False
     
     def login(self, username, password):
-        pass
+        hashed = hashlib.sha256(password.encode()).hexdigest()
+        
+        query = "SELECT * FROM users WHERE username = %s AND password = %s"
+        result = self.db.fetch_query(query, (username, hashed))
+        
+        if result and len(result) > 0:
+            self.current_user = result[0]
+            print(f"\n✓ Welcome, {username}!")
+            return True
+        else:
+            print("\n✗ Invalid username or password!")
+            return False
     
     def logout(self):
-        pass
+        if self.current_user:
+            username = self.current_user['username']
+            self.current_user = None
+            print(f"\n✓ User '{username}' logged out successfully!")
+            return True
+        return False
     
     def is_logged_in(self):
         return self.current_user is not None

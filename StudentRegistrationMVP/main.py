@@ -1,6 +1,7 @@
 from database import Database
 from user import User
 from student import Student
+from getpass import getpass
 
 
 class StudentRegistrationSystem:
@@ -57,11 +58,9 @@ class StudentRegistrationSystem:
                 choice = input("\nSelect action (1-3): ").strip()
                 
                 if choice == '1':
-                    print("\n[User Registration]")
-                    print("TODO: Will be implemented in next sessions")
+                    self.handle_registration()
                 elif choice == '2':
-                    print("\n[Login]")
-                    print("TODO: Will be implemented in next sessions")
+                    self.handle_login()
                 elif choice == '3':
                     print("\n✓ Exiting application...")
                     break
@@ -94,6 +93,41 @@ class StudentRegistrationSystem:
                     print("\n✓ You have logged out")
                 else:
                     print("\n✗ Invalid choice! Try again.")
+    
+    def handle_registration(self):
+        print("\n" + "="*60)
+        print("   USER REGISTRATION")
+        print("="*60)
+        
+        username = input("Enter username: ").strip()
+        
+        if not username:
+            print("\n✗ Username cannot be empty!")
+            return
+        
+        password = getpass("Enter password: ")
+        
+        if not password:
+            print("\n✗ Password cannot be empty!")
+            return
+        
+        confirm_password = getpass("Confirm password: ")
+        
+        if password != confirm_password:
+            print("\n✗ Passwords do not match!")
+            return
+        
+        self.user.register(username, password)
+    
+    def handle_login(self):
+        print("\n" + "="*60)
+        print("   USER LOGIN")
+        print("="*60)
+        
+        username = input("Enter username: ").strip()
+        password = getpass("Enter password: ")
+        
+        self.user.login(username, password)
     
     def cleanup(self):
         self.db.disconnect()
