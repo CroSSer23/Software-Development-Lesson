@@ -68,10 +68,29 @@ class Database:
         )
         """
         
+        create_students_table = """
+        CREATE TABLE IF NOT EXISTS students (
+            student_id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            age INT NOT NULL,
+            course VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL UNIQUE
+        )
+        """
+        
+        success = True
+        
         if self.execute_query(create_users_table):
             print("✓ Table 'users' created successfully")
-            return True
         else:
             print("✗ Failed to create 'users' table")
-            return False
+            success = False
+        
+        if self.execute_query(create_students_table):
+            print("✓ Table 'students' created successfully")
+        else:
+            print("✗ Failed to create 'students' table")
+            success = False
+        
+        return success
 

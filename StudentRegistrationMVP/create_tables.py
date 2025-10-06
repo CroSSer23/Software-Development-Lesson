@@ -32,6 +32,15 @@ def main():
                 print("-" * 75)
                 for col in columns:
                     print(f"{col['Field']:<15} {col['Type']:<20} {col['Null']:<8} {col['Key']:<8} {col['Extra']:<15}")
+            
+            print("\n[Students Table Structure:]")
+            columns = db.fetch_query("DESCRIBE students")
+            
+            if columns:
+                print(f"\n{'Field':<15} {'Type':<20} {'Null':<8} {'Key':<8} {'Extra':<15}")
+                print("-" * 75)
+                for col in columns:
+                    print(f"{col['Field']:<15} {col['Type']:<20} {col['Null']:<8} {col['Key']:<8} {col['Extra']:<15}")
         
         db.disconnect()
         

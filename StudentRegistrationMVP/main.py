@@ -71,8 +71,7 @@ class StudentRegistrationSystem:
                 choice = input("\nSelect action (1-7): ").strip()
                 
                 if choice == '1':
-                    print("\n[Add Student]")
-                    print("TODO: Will be implemented in next sessions")
+                    self.handle_add_student()
                 elif choice == '2':
                     print("\n[View All Students]")
                     print("TODO: Will be implemented in next sessions")
@@ -128,6 +127,37 @@ class StudentRegistrationSystem:
         password = getpass("Enter password: ")
         
         self.user.login(username, password)
+    
+    def handle_add_student(self):
+        print("\n" + "="*60)
+        print("   ADD NEW STUDENT")
+        print("="*60)
+        
+        name = input("Enter student name: ").strip()
+        
+        if not name:
+            print("\n✗ Name cannot be empty!")
+            return
+        
+        try:
+            age = int(input("Enter student age: ").strip())
+        except ValueError:
+            print("\n✗ Age must be a number!")
+            return
+        
+        course = input("Enter course name: ").strip()
+        
+        if not course:
+            print("\n✗ Course cannot be empty!")
+            return
+        
+        email = input("Enter student email: ").strip()
+        
+        if not email:
+            print("\n✗ Email cannot be empty!")
+            return
+        
+        self.student.add_student(name, age, course, email)
     
     def cleanup(self):
         self.db.disconnect()
