@@ -4,7 +4,7 @@ class Student:
         self.database = database
     
     def add_student(self, name, age, course, email):
-        # Validate input
+
         if not name or not name.strip():
             print("\n✗ Name cannot be empty!")
             return False
@@ -21,12 +21,10 @@ class Student:
             print("\n✗ Email cannot be empty!")
             return False
         
-        # Basic email validation
         if '@' not in email or '.' not in email:
             print("\n✗ Invalid email format!")
             return False
         
-        # Check if email already exists
         check_query = "SELECT * FROM students WHERE email = %s"
         existing = self.database.fetch_query(check_query, (email,))
         
@@ -34,7 +32,6 @@ class Student:
             print(f"\n✗ Student with email '{email}' already exists!")
             return False
         
-        # Insert student into database
         insert_query = """
         INSERT INTO students (name, age, course, email)
         VALUES (%s, %s, %s, %s)
