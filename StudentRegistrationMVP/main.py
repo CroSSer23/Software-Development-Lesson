@@ -76,8 +76,7 @@ class StudentRegistrationSystem:
                     print("\n[View All Students]")
                     print("TODO: Will be implemented in next sessions")
                 elif choice == '3':
-                    print("\n[Find Student by ID]")
-                    print("TODO: Will be implemented in next sessions")
+                    self.handle_find_student_by_id()
                 elif choice == '4':
                     print("\n[Update Student Data]")
                     print("TODO: Will be implemented in next sessions")
@@ -158,6 +157,19 @@ class StudentRegistrationSystem:
             return
         
         self.student.add_student(name, age, course, email)
+    
+    def handle_find_student_by_id(self):
+        print("\n" + "="*60)
+        print("   FIND STUDENT BY ID")
+        print("="*60)
+        
+        try:
+            student_id = int(input("Enter student ID: ").strip())
+        except ValueError:
+            print("\n✗ Student ID must be a number!")
+            return
+        
+        self.student.view_student_by_id(student_id)
     
     def cleanup(self):
         self.db.disconnect()

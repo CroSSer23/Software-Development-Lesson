@@ -48,7 +48,35 @@ class Student:
         pass
     
     def view_student_by_id(self, student_id):
-        pass
+        """
+        Retrieves a student record by their ID
+        Args:
+            student_id: The unique ID of the student
+        Returns:
+            Student record dictionary or None if not found
+        """
+        if not isinstance(student_id, int) or student_id <= 0:
+            print("\n✗ Student ID must be a positive number!")
+            return None
+        
+        query = "SELECT * FROM students WHERE student_id = %s"
+        result = self.database.fetch_query(query, (student_id,))
+        
+        if result and len(result) > 0:
+            student = result[0]
+            print("\n" + "="*60)
+            print("   STUDENT DETAILS")
+            print("="*60)
+            print(f"Student ID : {student['student_id']}")
+            print(f"Name       : {student['name']}")
+            print(f"Age        : {student['age']}")
+            print(f"Course     : {student['course']}")
+            print(f"Email      : {student['email']}")
+            print("="*60)
+            return student
+        else:
+            print(f"\n✗ Student with ID '{student_id}' not found!")
+            return None
     
     def update_student(self, student_id, name=None, age=None, course=None, email=None):
         pass
