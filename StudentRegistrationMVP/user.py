@@ -1,4 +1,7 @@
 import hashlib
+from rich.console import Console
+
+console = Console()
 
 
 class User:
@@ -14,16 +17,16 @@ class User:
         existing_user = self.db.fetch_query(check_query, (username,))
         
         if existing_user:
-            print(f"\n✗ Username '{username}' already exists!")
+            console.print(f"\n[red]✗ Username '{username}' already exists![/red]")
             return False
         
         insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
         
         if self.db.execute_query(insert_query, (username, hashed)):
-            print(f"\n✓ User '{username}' registered successfully!")
+            console.print(f"\n[green]✓ User '{username}' registered successfully![/green]")
             return True
         else:
-            print("\n✗ Registration failed!")
+            console.print("\n[red]✗ Registration failed![/red]")
             return False
     
     def login(self, username, password):
@@ -34,17 +37,17 @@ class User:
         
         if result and len(result) > 0:
             self.current_user = result[0]
-            print(f"\n✓ Welcome, {username}!")
+            console.print(f"\n[green]✓ Welcome, {username}![/green]")
             return True
         else:
-            print("\n✗ Invalid username or password!")
+            console.print("\n[red]✗ Invalid username or password![/red]")
             return False
     
     def logout(self):
         if self.current_user:
             username = self.current_user['username']
             self.current_user = None
-            print(f"\n✓ User '{username}' logged out successfully!")
+            console.print(f"\n[green]✓ User '{username}' logged out successfully![/green]")
             return True
         return False
     
@@ -57,4 +60,3 @@ class User:
     
     def get_current_user(self):
         return self.current_user
-

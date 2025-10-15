@@ -1,5 +1,8 @@
 import mysql.connector
 from mysql.connector import Error
+from rich.console import Console
+
+console = Console()
 
 
 class Database:
@@ -23,10 +26,10 @@ class Database:
             
             if self.connection.is_connected():
                 self.cursor = self.connection.cursor(dictionary=True)
-                print(f"✓ Successfully connected to database '{self.database}'")
+                console.print(f"[green]✓ Successfully connected to database '{self.database}'[/green]")
                 return True
         except Error as e:
-            print(f"✗ Database connection error: {e}")
+            console.print(f"[red]✗ Database connection error: {e}[/red]")
             return False
     
     def disconnect(self):
@@ -34,7 +37,7 @@ class Database:
             if self.cursor:
                 self.cursor.close()
             self.connection.close()
-            print("✓ Database connection closed")
+            console.print("[green]✓ Database connection closed[/green]")
     
     def execute_query(self, query, params=None):
         try:
@@ -45,7 +48,7 @@ class Database:
             self.connection.commit()
             return True
         except Error as e:
-            print(f"✗ Query execution error: {e}")
+            console.print(f"[red]✗ Query execution error: {e}[/red]")
             return False
     
     def fetch_query(self, query, params=None):
@@ -56,7 +59,7 @@ class Database:
                 self.cursor.execute(query)
             return self.cursor.fetchall()
         except Error as e:
-            print(f"✗ Query execution error: {e}")
+            console.print(f"[red]✗ Query execution error: {e}[/red]")
             return None
     
     def create_tables(self):
@@ -81,16 +84,15 @@ class Database:
         success = True
         
         if self.execute_query(create_users_table):
-            print("✓ Table 'users' created successfully")
+            console.print("[green]✓ Table 'users' created successfully[/green]")
         else:
-            print("✗ Failed to create 'users' table")
+            console.print("[red]✗ Failed to create 'users' table[/red]")
             success = False
         
         if self.execute_query(create_students_table):
-            print("✓ Table 'students' created successfully")
+            console.print("[green]✓ Table 'students' created successfully[/green]")
         else:
-            print("✗ Failed to create 'students' table")
+            console.print("[red]✗ Failed to create 'students' table[/red]")
             success = False
         
         return success
-

@@ -2,14 +2,21 @@ from database import Database
 from user import User
 from student import Student
 from getpass import getpass
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.prompt import Prompt
+
+console = Console()
 
 
 class StudentRegistrationSystem:
     
     def __init__(self):
-        print("="*60)
-        print("   STUDENT REGISTRATION SYSTEM - MVP")
-        print("="*60)
+        console.print(Panel.fit(
+            "[bold cyan]STUDENT REGISTRATION SYSTEM - MVP[/bold cyan]",
+            border_style="cyan"
+        ))
         
         self.db = Database(
             host='localhost',
@@ -19,157 +26,196 @@ class StudentRegistrationSystem:
         )
         
         if not self.db.connect():
-            print("\n✗ Failed to connect to database!")
-            print("Check:")
-            print("  1. MySQL server is running")
-            print("  2. Database 'student_db' exists")
-            print("  3. Connection parameters are correct")
+            console.print("\n[red]✗ Failed to connect to database![/red]")
+            console.print("[yellow]Check:[/yellow]")
+            console.print("  [yellow]1. MySQL server is running[/yellow]")
+            console.print("  [yellow]2. Database 'student_db' exists[/yellow]")
+            console.print("  [yellow]3. Connection parameters are correct[/yellow]")
             exit(1)
         
         self.user = User(self.db)
         self.student = Student(self.db)
     
     def display_main_menu(self):
-        print("\n" + "="*60)
-        print("   MAIN MENU")
-        print("="*60)
-        print("1. User Registration")
-        print("2. Login")
-        print("3. Exit")
-        print("="*60)
+        table = Table(title="\n[bold cyan]MAIN MENU[/bold cyan]", show_header=False, border_style="cyan")
+        table.add_column("Option", style="bold yellow", width=5)
+        table.add_column("Action", style="white")
+        
+        table.add_row("1.", "User Registration")
+        table.add_row("2.", "Login")
+        table.add_row("3.", "Exit")
+        
+        console.print(table)
     
     def display_student_menu(self):
-        print("\n" + "="*60)
-        print("   STUDENT MANAGEMENT")
-        print("="*60)
-        print("1. Add Student")
-        print("2. View All Students")
-        print("3. Find Student by ID")
-        print("4. Update Student Data")
-        print("5. Delete Student")
-        print("6. Search Students")
-        print("7. Logout")
-        print("="*60)
+        table = Table(title="\n[bold cyan]STUDENT MANAGEMENT[/bold cyan]", show_header=False, border_style="cyan")
+        table.add_column("Option", style="bold yellow", width=5)
+        table.add_column("Action", style="white")
+        
+        table.add_row("1.", "Add Student")
+        table.add_row("2.", "View All Students")
+        table.add_row("3.", "Find Student by ID")
+        table.add_row("4.", "Update Student Data")
+        table.add_row("5.", "Delete Student")
+        table.add_row("6.", "Search Students")
+        table.add_row("7.", "Logout")
+        
+        console.print(table)
     
     def run(self):
         while True:
             if not self.user.is_logged_in():
                 self.display_main_menu()
-                choice = input("\nSelect action (1-3): ").strip()
+                choice = Prompt.ask("\n[bold yellow]Select action[/bold yellow]", choices=["1", "2", "3"])
                 
                 if choice == '1':
                     self.handle_registration()
                 elif choice == '2':
                     self.handle_login()
                 elif choice == '3':
-                    print("\n✓ Exiting application...")
+                    console.print("\n[green]✓ Exiting application...[/green]")
                     break
-                else:
-                    print("\n✗ Invalid choice! Try again.")
             else:
                 self.display_student_menu()
-                choice = input("\nSelect action (1-7): ").strip()
+                choice = Prompt.ask("\n[bold yellow]Select action[/bold yellow]", choices=["1", "2", "3", "4", "5", "6", "7"])
                 
                 if choice == '1':
                     self.handle_add_student()
                 elif choice == '2':
-                    print("\n[View All Students]")
-                    print("TODO: Will be implemented in next sessions")
+                    console.print(Panel("[yellow]TODO: Will be implemented in next sessions[/yellow]", title="View All Students", border_style="yellow"))
                 elif choice == '3':
                     self.handle_find_student_by_id()
                 elif choice == '4':
-                    print("\n[Update Student Data]")
-                    print("TODO: Will be implemented in next sessions")
+                    self.handle_update_student()
                 elif choice == '5':
-                    print("\n[Delete Student]")
-                    print("TODO: Will be implemented in next sessions")
+                    console.print(Panel("[yellow]TODO: Will be implemented in next sessions[/yellow]", title="Delete Student", border_style="yellow"))
                 elif choice == '6':
-                    print("\n[Search Students]")
-                    print("TODO: Will be implemented in next sessions")
+                    console.print(Panel("[yellow]TODO: Will be implemented in next sessions[/yellow]", title="Search Students", border_style="yellow"))
                 elif choice == '7':
                     self.user.logout()
-                    print("\n✓ You have logged out")
-                else:
-                    print("\n✗ Invalid choice! Try again.")
     
     def handle_registration(self):
-        print("\n" + "="*60)
-        print("   USER REGISTRATION")
-        print("="*60)
+        console.print(Panel.fit("[bold cyan]USER REGISTRATION[/bold cyan]", border_style="cyan"))
         
-        username = input("Enter username: ").strip()
+        username = Prompt.ask("\n[cyan]Enter username[/cyan]").strip()
         
         if not username:
-            print("\n✗ Username cannot be empty!")
+            console.print("\n[red]✗ Username cannot be empty![/red]")
             return
         
         password = getpass("Enter password: ")
         
         if not password:
-            print("\n✗ Password cannot be empty!")
+            console.print("\n[red]✗ Password cannot be empty![/red]")
             return
         
         confirm_password = getpass("Confirm password: ")
         
         if password != confirm_password:
-            print("\n✗ Passwords do not match!")
+            console.print("\n[red]✗ Passwords do not match![/red]")
             return
         
         self.user.register(username, password)
     
     def handle_login(self):
-        print("\n" + "="*60)
-        print("   USER LOGIN")
-        print("="*60)
+        console.print(Panel.fit("[bold cyan]USER LOGIN[/bold cyan]", border_style="cyan"))
         
-        username = input("Enter username: ").strip()
+        username = Prompt.ask("\n[cyan]Enter username[/cyan]").strip()
         password = getpass("Enter password: ")
         
         self.user.login(username, password)
     
     def handle_add_student(self):
-        print("\n" + "="*60)
-        print("   ADD NEW STUDENT")
-        print("="*60)
+        console.print(Panel.fit("[bold cyan]ADD NEW STUDENT[/bold cyan]", border_style="cyan"))
         
-        name = input("Enter student name: ").strip()
+        name = Prompt.ask("\n[cyan]Enter student name[/cyan]").strip()
         
         if not name:
-            print("\n✗ Name cannot be empty!")
+            console.print("\n[red]✗ Name cannot be empty![/red]")
             return
         
         try:
-            age = int(input("Enter student age: ").strip())
+            age = int(Prompt.ask("[cyan]Enter student age[/cyan]").strip())
         except ValueError:
-            print("\n✗ Age must be a number!")
+            console.print("\n[red]✗ Age must be a number![/red]")
             return
         
-        course = input("Enter course name: ").strip()
+        course = Prompt.ask("[cyan]Enter course name[/cyan]").strip()
         
         if not course:
-            print("\n✗ Course cannot be empty!")
+            console.print("\n[red]✗ Course cannot be empty![/red]")
             return
         
-        email = input("Enter student email: ").strip()
+        email = Prompt.ask("[cyan]Enter student email[/cyan]").strip()
         
         if not email:
-            print("\n✗ Email cannot be empty!")
+            console.print("\n[red]✗ Email cannot be empty![/red]")
             return
         
         self.student.add_student(name, age, course, email)
     
     def handle_find_student_by_id(self):
-        print("\n" + "="*60)
-        print("   FIND STUDENT BY ID")
-        print("="*60)
+        console.print(Panel.fit("[bold cyan]FIND STUDENT BY ID[/bold cyan]", border_style="cyan"))
         
         try:
-            student_id = int(input("Enter student ID: ").strip())
+            student_id = int(Prompt.ask("\n[cyan]Enter student ID[/cyan]").strip())
         except ValueError:
-            print("\n✗ Student ID must be a number!")
+            console.print("\n[red]✗ Student ID must be a number![/red]")
             return
         
         self.student.view_student_by_id(student_id)
+    
+    def handle_update_student(self):
+        console.print(Panel.fit("[bold cyan]UPDATE STUDENT DATA[/bold cyan]", border_style="cyan"))
+        
+        try:
+            student_id = int(Prompt.ask("\n[cyan]Enter student ID[/cyan]").strip())
+        except ValueError:
+            console.print("\n[red]✗ Student ID must be a number![/red]")
+            return
+        
+        check_query = "SELECT * FROM students WHERE student_id = %s"
+        existing = self.db.fetch_query(check_query, (student_id,))
+        
+        if not existing or len(existing) == 0:
+            console.print(f"\n[red]✗ Student with ID '{student_id}' not found![/red]")
+            return
+        
+        student = existing[0]
+        
+        table = Table(title="CURRENT STUDENT DETAILS", show_header=False, border_style="yellow")
+        table.add_column("Field", style="bold yellow", width=10)
+        table.add_column("Value", style="white")
+        
+        table.add_row("Name", student['name'])
+        table.add_row("Age", str(student['age']))
+        table.add_row("Course", student['course'])
+        table.add_row("Email", student['email'])
+        
+        console.print()
+        console.print(table)
+        console.print("\n[dim]Leave field blank to keep current value[/dim]\n")
+        
+        name = Prompt.ask(f"[cyan]Enter new name (current: {student['name']})[/cyan]", default="").strip()
+        
+        age_input = Prompt.ask(f"[cyan]Enter new age (current: {student['age']})[/cyan]", default="").strip()
+        age = None
+        if age_input:
+            try:
+                age = int(age_input)
+            except ValueError:
+                console.print("\n[red]✗ Age must be a number! Skipping age update.[/red]")
+        
+        course = Prompt.ask(f"[cyan]Enter new course (current: {student['course']})[/cyan]", default="").strip()
+        email = Prompt.ask(f"[cyan]Enter new email (current: {student['email']})[/cyan]", default="").strip()
+        
+        self.student.update_student(
+            student_id=student_id,
+            name=name if name else None,
+            age=age,
+            course=course if course else None,
+            email=email if email else None
+        )
     
     def cleanup(self):
         self.db.disconnect()
@@ -181,14 +227,13 @@ def main():
     try:
         system.run()
     except KeyboardInterrupt:
-        print("\n\n✓ Interrupted by user")
+        console.print("\n\n[green]✓ Interrupted by user[/green]")
     except Exception as e:
-        print(f"\n✗ An error occurred: {e}")
+        console.print(f"\n[red]✗ An error occurred: {e}[/red]")
     finally:
         system.cleanup()
-        print("\n✓ Finished. Goodbye!")
+        console.print("\n[green]✓ Finished. Goodbye![/green]")
 
 
 if __name__ == "__main__":
     main()
-
