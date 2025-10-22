@@ -82,7 +82,7 @@ class StudentRegistrationSystem:
                 if choice == '1':
                     self.handle_add_student()
                 elif choice == '2':
-                    console.print(Panel("[yellow]TODO: Will be implemented in next sessions[/yellow]", title="View All Students", border_style="yellow"))
+                    self.handle_view_all_students()
                 elif choice == '3':
                     self.handle_find_student_by_id()
                 elif choice == '4':
@@ -216,6 +216,10 @@ class StudentRegistrationSystem:
             course=course if course else None,
             email=email if email else None
         )
+    
+    def handle_view_all_students(self):
+        console.print(Panel.fit("[bold cyan]VIEW ALL STUDENTS[/bold cyan]", border_style="cyan"))
+        self.student.view_all_students()
     
     def cleanup(self):
         self.db.disconnect()

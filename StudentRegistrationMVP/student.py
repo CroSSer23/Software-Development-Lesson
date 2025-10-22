@@ -51,7 +51,37 @@ class Student:
             return False
     
     def view_all_students(self):
-        pass
+        query = "SELECT * FROM students ORDER BY student_id"
+        result = self.database.fetch_query(query)
+        
+        if result and len(result) > 0:
+            table = Table(title="ALL STUDENTS", show_header=True, border_style="cyan")
+            table.add_column("ID", style="bold yellow", width=5)
+            table.add_column("Name", style="bold cyan", width=20)
+            table.add_column("Age", style="white", width=5)
+            table.add_column("Course", style="green", width=25)
+            table.add_column("Email", style="blue", width=30)
+            
+            for student in result:
+                table.add_row(
+                    str(student['student_id']),
+                    student['name'],
+                    str(student['age']),
+                    student['course'],
+                    student['email']
+                )
+            
+            console.print()
+            console.print(table)
+            console.print(f"\n[green]Total students: {len(result)}[/green]")
+            return result
+        else:
+            console.print(Panel.fit(
+                "[yellow]No students found in the database[/yellow]",
+                title="No Students",
+                border_style="yellow"
+            ))
+            return []
     
     def view_student_by_id(self, student_id):
         if not isinstance(student_id, int) or student_id <= 0:
