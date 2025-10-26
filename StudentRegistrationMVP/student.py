@@ -171,7 +171,27 @@ class Student:
             return False
     
     def delete_student(self, student_id):
-        pass
+        if not isinstance(student_id, int) or student_id <= 0:
+            console.print("\n[red]✗ Student ID must be a positive number![/red]")
+            return False
+        
+        check_query = "SELECT * FROM students WHERE student_id = %s"
+        existing = self.database.fetch_query(check_query, (student_id,))
+        
+        if not existing or len(existing) == 0:
+            console.print(f"\n[yellow]⚠ Student with ID '{student_id}' not found![/yellow]")
+            return False
+        
+        student = existing[0]
+        
+        delete_query = "DELETE FROM students WHERE student_id = %s"
+        
+        if self.database.execute_query(delete_query, (student_id,)):
+            console.print(f"\n[green]✓ Student '{student['name']}' (ID: {student_id}) deleted successfully![/green]")
+            return True
+        else:
+            console.print("\n[red]✗ Failed to delete student![/red]")
+            return False
     
     def search_students(self, search_term):
         pass

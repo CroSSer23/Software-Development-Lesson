@@ -88,7 +88,7 @@ class StudentRegistrationSystem:
                 elif choice == '4':
                     self.handle_update_student()
                 elif choice == '5':
-                    console.print(Panel("[yellow]TODO: Will be implemented in next sessions[/yellow]", title="Delete Student", border_style="yellow"))
+                    self.handle_delete_student()
                 elif choice == '6':
                     console.print(Panel("[yellow]TODO: Will be implemented in next sessions[/yellow]", title="Search Students", border_style="yellow"))
                 elif choice == '7':
@@ -216,6 +216,44 @@ class StudentRegistrationSystem:
             course=course if course else None,
             email=email if email else None
         )
+    
+    def handle_delete_student(self):
+        console.print(Panel.fit("[bold cyan]DELETE STUDENT[/bold cyan]", border_style="cyan"))
+        
+        try:
+            student_id = int(Prompt.ask("\n[cyan]Enter student ID to delete[/cyan]").strip())
+        except ValueError:
+            console.print("\n[red]✗ Student ID must be a number![/red]")
+            return
+        
+        check_query = "SELECT * FROM students WHERE student_id = %s"
+        existing = self.db.fetch_query(check_query, (student_id,))
+        
+        if not existing or len(existing) == 0:
+            console.print(f"\n[yellow]⚠ Student with ID '{student_id}' not found![/yellow]")
+            return
+        
+        student = existing[0]
+        
+        table = Table(title="STUDENT TO DELETE", show_header=False, border_style="red")
+        table.add_column("Field", style="bold red", width=10)
+        table.add_column("Value", style="white")
+        
+        table.add_row("ID", str(student['student_id']))
+        table.add_row("Name", student['name'])
+        table.add_row("Age", str(student['age']))
+        table.add_row("Course", student['course'])
+        table.add_row("Email", student['email'])
+        
+        console.print()
+        console.print(table)
+        
+        confirm = Prompt.ask("\n[bold red]Are you sure you want to delete this student?[/bold red]", choices=["y", "n", "yes", "no"], default="n")
+        
+        if confirm.lower() in ['y', 'yes']:
+            self.student.delete_student(student_id)
+        else:
+            console.print("\n[yellow]✓ Deletion cancelled[/yellow]")
     
     def handle_view_all_students(self):
         console.print(Panel.fit("[bold cyan]VIEW ALL STUDENTS[/bold cyan]", border_style="cyan"))
